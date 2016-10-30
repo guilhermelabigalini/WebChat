@@ -13,6 +13,21 @@
                 height: 100vh;
             }
         </style>
+        <script type="text/javascript">
+
+            $(function(){
+
+                $('.list-group a').click(function(e) {
+                    e.preventDefault();
+
+                    $that = $(this);
+
+                    $that.parent().find('a').removeClass('active');
+                    $that.addClass('active');
+                });
+            });
+            
+        </script>
     </head>
     <body>
         <div class="container-fluid height-full">

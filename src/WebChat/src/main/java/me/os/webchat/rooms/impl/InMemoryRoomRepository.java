@@ -85,10 +85,22 @@ public class InMemoryRoomRepository //implements IRoomService
 
         targetRoom.getRoomState().getLoggedUsers().add(user);
 
+        setUser(roomId, user.getDisplayName(), session);
+
+        ChatMessage ulMessage = new ChatMessage();
+        ulMessage.setType(ChatMessage.MESSAGETYPE_USERLIST);
+        String userList = targetRoom.getRoomState().getLoggedUsers()
+                .stream()
+                .map(cu -> "\"" + cu.getDisplayName() + "\"")
+                .reduce((result, element) -> result + "," + element).orElse(null);
+        ulMessage.setTo(user.getDisplayName());
+        ulMessage.setBody("[" + userList + "]");
+        ulMessage.setReserved(true);
+        internalBroadcastMessage(targetRoom, ulMessage);
+
         ChatMessage message = new ChatMessage();
         message.setType(ChatMessage.MESSAGETYPE_JOINED);
         message.setFrom(user.getDisplayName());
-
         setUser(roomId, user.getDisplayName(), session);
 
         internalBroadcastMessage(targetRoom, message);
@@ -101,7 +113,7 @@ public class InMemoryRoomRepository //implements IRoomService
         if (targetRoom == null) {
             throw new InvalidRoomException();
         }
-        
+
         setUser(roomId, userId, null);
 
         targetRoom.getRoomState().removeUser(userId);
@@ -152,12 +164,13 @@ public class InMemoryRoomRepository //implements IRoomService
                     || (!message.isReserved() || cu.getDisplayName().equals(message.getTo()))) {
                 try {
                     Session userSession = getUser(targetRoom.getId(), cu.getDisplayName());
-                    
-                    if (! userSession.isOpen())
+
+                    if (!userSession.isOpen()) {
                         setUser(targetRoom.getId(), cu.getDisplayName(), null);
-                    else 
+                    } else {
                         userSession.getBasicRemote().sendObject(message);
-                    
+                    }
+
                 } catch (IOException | EncodeException ex) {
                     ex.printStackTrace();
                 }

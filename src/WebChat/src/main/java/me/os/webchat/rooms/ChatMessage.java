@@ -11,10 +11,10 @@ package me.os.webchat.rooms;
  */
 public class ChatMessage {
 
-    public final static String MESSAGETYPE_WANTTOJOIN = "wanttojoin";
     public final static String MESSAGETYPE_MESSAGE = "message";
     public final static String MESSAGETYPE_JOINED = "joined";
     public final static String MESSAGETYPE_LEAVE = "leave";
+    public final static String MESSAGETYPE_USERLIST = "userlist";
 
     private String from;
     private String to;

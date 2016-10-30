@@ -1,0 +1,11 @@
+- connectivity icon
+- hide join when connected
+- hide text message when not d
+- selected user panel is not working
+- private messages are not working
+
+- AO abri a janela cria a conexao e escuta tudo
+	- primaira messagem list de usuarios
+	- set o nick que pode ser rejeitado
+	
+

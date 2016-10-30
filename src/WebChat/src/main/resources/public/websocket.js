@@ -58,7 +58,7 @@ function onMessage(evt) {
 
     if (msg.type == "joined") {
         writeToLog("User <b>" + msg.from + "</b> has joined the room ");
-        $("#user-list").append('<a href="#" class="list-group-item">' + msg.from + '</a>');
+        addUserToList(msg.from);
     } else if (msg.type == "leave") {
         writeToLog("User <b>" + msg.from + "</b> has left the room");
     } else if (msg.type == "message") {
@@ -67,7 +67,25 @@ function onMessage(evt) {
         } else {
             writeToLog("From <b>" + msg.from + "</b> to everyone: " + msg.body);
         }
+    } else if (msg.type == "userlist") {
+        var userArray = JSON.parse(msg.body);
+        console.log(userArray);
+        addUsers(userArray);
     }
+}
+
+function addUsers(userArray)
+{
+    userArray.forEach(function(entry) {
+        addUserToList(entry);
+    });
+}
+
+function addUserToList(userName)
+{
+    var ul = $("#user-list");
+    if (! ul.children('#' + userName).length) 
+        ul.append('<a href="#" class="list-group-item" id="' + userName + '">' + userName + '</a>');
 }
 
 function writeToLog(message) {
