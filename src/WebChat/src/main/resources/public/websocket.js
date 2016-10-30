@@ -5,9 +5,11 @@ var wsUri = "ws://" + document.location.hostname + ":" + document.location.port 
 var websocket = null;
 var customUrl;
 var username;
-
+var toUserName = null;
 
 function join() {
+    toUserName = null;
+
     username = $("#nickname").val();
     customUrl = wsUri + "/" + "1" + "/" + username;
     console.log("connecting to " + customUrl);
@@ -32,7 +34,8 @@ function send_message() {
         type: "message",
         body: $("#message").val(),
         destination: "",
-        reserved: $("#reserved").is(':checked')
+        reserved: $("#reserved").is(':checked'),
+        to: toUserName
     };
 
     console.log(msg);
@@ -47,7 +50,6 @@ function onClose(evt) {
 
 function onOpen() {
     console.log("Connected to " + customUrl);
-    // websocket.send(username + " joined");
 }
 
 function onMessage(evt) {
@@ -61,6 +63,7 @@ function onMessage(evt) {
         addUserToList(msg.from);
     } else if (msg.type == "leave") {
         writeToLog("User <b>" + msg.from + "</b> has left the room");
+        removeUserFromList(msg.from);
     } else if (msg.type == "message") {
         if (msg.to != undefined && msg.to != "") {
             writeToLog("From <b>" + msg.from + "</b> to <b>" + msg.to + "</b>: " + msg.body);
@@ -76,16 +79,45 @@ function onMessage(evt) {
 
 function addUsers(userArray)
 {
-    userArray.forEach(function(entry) {
+    userArray.forEach(function (entry) {
         addUserToList(entry);
     });
+}
+
+function selectcontact(e, contact)
+{
+    $that = $(e);
+
+    $that.parent().find('a').removeClass('active');
+    $that.addClass('active');
+
+    console.log('selected contact: ' + contact);
+
+    if (contact)
+        toUserName = contact;
+    else
+        toUserName = null;
+}
+
+function removeUserFromList(userName)
+{
+    var ul = $("#user-list");
+    ul.children('#' + userName).remove();
+    
+    if (userName == toUserName)
+        toUserName = null;
 }
 
 function addUserToList(userName)
 {
     var ul = $("#user-list");
-    if (! ul.children('#' + userName).length) 
-        ul.append('<a href="#" class="list-group-item" id="' + userName + '">' + userName + '</a>');
+    if (!ul.children('#' + userName).length) {
+        var newLink = $('<a href="#" class="list-group-item" id="' + userName + '">' + userName + '</a>');
+        newLink.click(function (evt) {
+            selectcontact(this, userName);
+        });
+        ul.append(newLink);
+    }
 }
 
 function writeToLog(message) {

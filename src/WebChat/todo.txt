@@ -1,8 +1,14 @@
 - connectivity icon
 - hide join when connected
-- hide text message when not d
-- selected user panel is not working
-- private messages are not working
+- hide text message when not connected
+- (OK) selected user panel is not working
+	- (OK) allow selection
+	- (OK) add users when joining
+	- (OK) remove users when leaving
+	- (OK) add all users when connected 
+- (OK) private messages are not working
+- make code more generic
+- integrate with Redis
 
 - AO abri a janela cria a conexao e escuta tudo
 	- primaira messagem list de usuarios
