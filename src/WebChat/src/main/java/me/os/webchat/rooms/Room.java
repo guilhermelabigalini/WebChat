@@ -1,42 +1,66 @@
 package me.os.webchat.rooms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Room {
 
-	public Room(int id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.roomState = new RoomState();
-	}
+    private final int MaxUsersPerRoom = 10;
 
-	private int id;
-	
-	private String name;
-	
-	private RoomState roomState;
+    public Room(int id, String name) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.loggedUsers = new ArrayList<>();
+    }
 
-	public int getId() {
-		return id;
-	}
+    private int id;
+    private String name;
+    private List<ChatUser> loggedUsers;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public RoomState getRoomState() {
-		return roomState;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setRoomState(RoomState loggedUsers) {
-		this.roomState = loggedUsers;
-	}
-	
+    public List<ChatUser> getLoggedUsers() {
+        return loggedUsers;
+    }
+
+    public void joinUser(ChatUser user) throws UserAlreadyLoggedException, FullRoomException {
+
+        if (getLoggedUsers().size() >= MaxUsersPerRoom) {
+            throw new FullRoomException();
+        }
+
+        if (isUserPresent(user)) {
+            throw new UserAlreadyLoggedException();
+        }
+
+        this.loggedUsers.add(user);
+    }
+
+    public void setLoggedUsers(List<ChatUser> loggedUsers) {
+        this.loggedUsers = loggedUsers;
+    }
+
+    public boolean isUserPresent(ChatUser cu) {
+        return this.loggedUsers.stream().anyMatch(u -> u.getDisplayName().equals(cu.getDisplayName()));
+    }
+
+    public void removeUser(String userId) {
+        this.loggedUsers.removeIf(u -> u.getDisplayName().equals(userId));
+    }
+
 }

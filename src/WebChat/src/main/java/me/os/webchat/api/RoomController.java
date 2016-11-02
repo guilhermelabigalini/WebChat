@@ -3,8 +3,8 @@ package me.os.webchat.api;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
+import me.os.webchat.rooms.ChatUser;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,17 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.os.webchat.rooms.IRoomService;
 import me.os.webchat.rooms.Room;
-import me.os.webchat.rooms.RoomState;
-import me.os.webchat.rooms.impl.InMemoryRoomRepository;
+import me.os.webchat.rooms.impl.memory.InMemoryRoomService;
 
 @RestController
 public class RoomController {
 
     //@Autowired
     //private IRoomService roomService;
-private InMemoryRoomRepository roomService = new InMemoryRoomRepository();
+    private final InMemoryRoomService roomService = new InMemoryRoomService();
 
 
     @RequestMapping(path = "/api/rooms", method = GET)
@@ -31,12 +29,12 @@ private InMemoryRoomRepository roomService = new InMemoryRoomRepository();
     }
 
     @RequestMapping(path = "/api/rooms/{id}/loggedusers", method = GET)
-    public ResponseEntity<RoomState> getRoomUsers(@PathVariable("id") Integer id) {
+    public ResponseEntity<List<ChatUser>> getRoomUsers(@PathVariable("id") Integer id) {
         Room r = this.roomService.getRoom(id);
         if (r != null) {
-            return ResponseEntity.ok(r.getRoomState());
+            return ResponseEntity.ok(r.getLoggedUsers());
         }
 
-        return new ResponseEntity<RoomState>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

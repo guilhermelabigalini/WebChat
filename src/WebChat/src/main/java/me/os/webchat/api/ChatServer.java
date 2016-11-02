@@ -1,9 +1,7 @@
 package me.os.webchat.api;
 
-import me.os.webchat.rooms.ChatMessage;
 import java.io.IOException;
 import java.util.Set;
-
 import javax.websocket.CloseReason;
 import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
@@ -13,16 +11,16 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import me.os.webchat.rooms.BroadcastException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
+import me.os.webchat.rooms.ChatMessage;
 import me.os.webchat.rooms.ChatUser;
 import me.os.webchat.rooms.FullRoomException;
+import me.os.webchat.rooms.IBroadcastService;
 import me.os.webchat.rooms.IRoomService;
 import me.os.webchat.rooms.InvalidRoomException;
 import me.os.webchat.rooms.Room;
 import me.os.webchat.rooms.UserAlreadyLoggedException;
-import me.os.webchat.rooms.impl.InMemoryRoomRepository;
+import me.os.webchat.rooms.impl.memory.InMemoryBroadcastService;
+import me.os.webchat.rooms.impl.memory.InMemoryRoomService;
 
 // http://stackoverflow.com/questions/21559260/how-do-i-pass-a-parameter-to-the-onopen-method-with-jee7-websockets
 @ServerEndpoint(
@@ -32,27 +30,33 @@ import me.os.webchat.rooms.impl.InMemoryRoomRepository;
 public class ChatServer {
 
     //@Autowired
-    private InMemoryRoomRepository roomService = new InMemoryRoomRepository();
+    private final IRoomService roomService = new InMemoryRoomService();
+    private final IBroadcastService bs = new InMemoryBroadcastService();
 
     @OnOpen
     public void open(
             @PathParam("room") Integer room,
             @PathParam("displayName") String displayName,
-            Session session) throws InvalidRoomException, FullRoomException, UserAlreadyLoggedException {
+            Session session) throws InvalidRoomException, FullRoomException, UserAlreadyLoggedException, Exception {
 
         System.out.println("session started");
 
+        Room targetRoom = roomService.getRoom(room);
         ChatUser user = new ChatUser(displayName);
 
-        roomService.joinRoom(room, user, session);
+        bs.joinUser(targetRoom, user, new WebSocketUserChannel(session));
     }
 
     @OnClose
     public void close(CloseReason c, Session client,
             @PathParam("displayName") String displayName,
-            @PathParam("room") Integer room) throws InvalidRoomException {
-        roomService.leaveRoom(room, displayName);
-        System.out.println("session closed");
+            @PathParam("room") Integer room) throws InvalidRoomException, Exception {
+        
+        Room targetRoom = roomService.getRoom(room);
+        
+        ChatUser user = new ChatUser(displayName);
+        
+        bs.userExit(targetRoom, user);;
     }
 
     @OnMessage
@@ -62,13 +66,16 @@ public class ChatServer {
             ChatMessage message, Session session) throws IOException,
             EncodeException,
             InvalidRoomException,
-            BroadcastException {
+            BroadcastException,
+            Exception {
 
         Set<Session> activeSessions = session.getOpenSessions();
         System.out.println("message: " + message + " send to total clients: " + activeSessions.size());
 
         message.setFrom(displayName);
 
-        roomService.broadcastMessage(room, message, session);
+        Room targetRoom = roomService.getRoom(room);
+        
+        bs.broadcastMessage(targetRoom, message);
     }
 }
