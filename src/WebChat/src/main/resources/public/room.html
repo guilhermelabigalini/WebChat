@@ -33,20 +33,33 @@
                 </div>
             </div>
             <div class="row" style="height: 25vh" >
-                <div class="col-xs-2"></div>
+                <div class="col-xs-2">  
+                </div>
                 <div class="col-xs-10">
-                    <div class="form-group col-sm-4" style="display: " id="div-login-form">
-                        <label for="nickname">Nickname:</label>
-                        <input class="form-control" id="nickname" type="text" size="30">
-                        <input onclick="join();" value="Join" type="button" class="btn btn-success"> 
-                        <a href="index.html" class="btn btn-success">Exit</a>
+                    <div id="div-login-form">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <img src="disconnected.png" id="state-icon" width="32" height="32" >  
+                                <label for="nickname" class="control-label">Nickname:</label>
+                                <input class="form-control input input-sm" id="nickname" type="text" size="50" placeholder="Enter your nickname">
+                                <input onclick="join();" value="Join" type="button" class="btn btn-success"> 
+                                <a href="index.html" class="btn btn-success">Exit</a>
+                            </div>                         
+                        </form>
                     </div>
-                    <div class="form-group col-sm-4" style="display: " id="div-message-form">
-                        <label for="nickname">Message:</label>
-                        <input class="form-control" id="message" name="name" value="Duke" type="text">
-                        <input class="form-control" id="reserved" type="checkbox">
-                        <input onclick="send_message();" value="Send" type="button" class="btn btn-success"> 
-                        <a href="index.html" class="btn btn-success">Exit</a>
+                    <div style="display: none" id="div-message-form">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <img src="connected.png" id="state-icon" width="32" height="32"/>  
+                                <label for="message" class="control-label">Message:</label>
+                                <textarea class="form-control input input-sm" rows="2" cols="60"
+                                          id="message"></textarea>
+                                <label for="reserved">Private message?</label>
+                                <input class="form-control" id="reserved" type="checkbox">
+                                <input onclick="send_message();" value="Send" type="button" class="btn btn-success"> 
+                                <a href="index.html" class="btn btn-success">Exit</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

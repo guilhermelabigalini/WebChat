@@ -40,16 +40,21 @@ function send_message() {
 
     console.log(msg);
     websocket.send(JSON.stringify(msg));
-    $("#textField").val("");
+    $("#message").val("");
 }
 
 function onClose(evt) {
     console.log("Closed ");
     console.log(evt);
+    
+    displayDisconnectedUI();
+    writeToLog("Connection closed");
 }
 
 function onOpen() {
     console.log("Connected to " + customUrl);
+    
+    displayConnectedUI();
 }
 
 function onMessage(evt) {
@@ -66,7 +71,11 @@ function onMessage(evt) {
         removeUserFromList(msg.from);
     } else if (msg.type == "message") {
         if (msg.to != undefined && msg.to != "") {
-            writeToLog("From <b>" + msg.from + "</b> to <b>" + msg.to + "</b>: " + msg.body);
+            if (!msg.reserved) {
+                writeToLog("From <b>" + msg.from + "</b> to <b>" + msg.to + "</b>: " + msg.body);
+            } else {
+                writeToLog("From <b>" + msg.from + "</b> reservedly to <b>" + msg.to + "</b>: " + msg.body);
+            }
         } else {
             writeToLog("From <b>" + msg.from + "</b> to everyone: " + msg.body);
         }
@@ -130,4 +139,14 @@ function writeToLog(message) {
 
 function onError(evt) {
     console.log(evt);
+}
+
+function displayConnectedUI() {
+    $("#div-login-form").css('display','none');
+    $("#div-message-form").css('display','');
+}
+
+function displayDisconnectedUI() {
+    $("#div-login-form").css('display','');
+    $("#div-message-form").css('display','none');
 }

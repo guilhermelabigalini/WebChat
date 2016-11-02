@@ -1,6 +1,6 @@
-- connectivity icon
-- hide join when connected
-- hide text message when not connected
+- (OK) connectivity icon
+- (OK) hide join when connected
+- (OK) hide text message when not connected
 - (OK) selected user panel is not working
 	- (OK) allow selection
 	- (OK) add users when joining
