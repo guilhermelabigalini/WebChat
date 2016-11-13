@@ -14,12 +14,10 @@ import me.os.webchat.rooms.BroadcastException;
 import me.os.webchat.rooms.ChatMessage;
 import me.os.webchat.rooms.ChatUser;
 import me.os.webchat.rooms.FullRoomException;
-import me.os.webchat.rooms.IBroadcastService;
+import me.os.webchat.rooms.IRoom;
 import me.os.webchat.rooms.IRoomService;
 import me.os.webchat.rooms.InvalidRoomException;
-import me.os.webchat.rooms.Room;
 import me.os.webchat.rooms.UserAlreadyLoggedException;
-import me.os.webchat.rooms.impl.memory.InMemoryBroadcastService;
 import me.os.webchat.rooms.impl.memory.InMemoryRoomService;
 
 // http://stackoverflow.com/questions/21559260/how-do-i-pass-a-parameter-to-the-onopen-method-with-jee7-websockets
@@ -31,51 +29,49 @@ public class ChatServer {
 
     //@Autowired
     private final IRoomService roomService = new InMemoryRoomService();
-    private final IBroadcastService bs = new InMemoryBroadcastService();
 
     @OnOpen
     public void open(
             @PathParam("room") Integer room,
             @PathParam("displayName") String displayName,
-            Session session) throws InvalidRoomException, FullRoomException, UserAlreadyLoggedException, Exception {
+            Session session) throws InvalidRoomException, FullRoomException, UserAlreadyLoggedException, BroadcastException {
 
         System.out.println("session started");
 
-        Room targetRoom = roomService.getRoom(room);
+        IRoom targetRoom = roomService.getRoom(room);
         ChatUser user = new ChatUser(displayName);
 
-        bs.joinUser(targetRoom, user, new WebSocketUserChannel(session));
+        targetRoom.joinUser(user, new WebSocketUserChannel(session));
     }
 
     @OnClose
     public void close(CloseReason c, Session client,
             @PathParam("displayName") String displayName,
-            @PathParam("room") Integer room) throws InvalidRoomException, Exception {
+            @PathParam("room") Integer room) throws InvalidRoomException, BroadcastException {
         
-        Room targetRoom = roomService.getRoom(room);
+        IRoom targetRoom = roomService.getRoom(room);
         
         ChatUser user = new ChatUser(displayName);
         
-        bs.userExit(targetRoom, user);;
+        targetRoom.removeUser(user);
     }
 
     @OnMessage
     public void message(
             @PathParam("room") Integer room,
             @PathParam("displayName") String displayName,
-            ChatMessage message, Session session) throws IOException,
-            EncodeException,
+            ChatMessage message, Session session) throws 
             InvalidRoomException,
-            BroadcastException,
-            Exception {
+            BroadcastException {
 
         Set<Session> activeSessions = session.getOpenSessions();
         System.out.println("message: " + message + " send to total clients: " + activeSessions.size());
 
+        message.setRoom(room);
         message.setFrom(displayName);
 
-        Room targetRoom = roomService.getRoom(room);
+        IRoom targetRoom = roomService.getRoom(room);
         
-        bs.broadcastMessage(targetRoom, message);
+        targetRoom.broadcastMessage(message);
     }
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface IRoomService {
 
-    List<Room> getRooms(String name);
+    List<IRoom> getRooms(String name);
 
-    Room getRoom(int roomId);
+    IRoom getRoom(int roomId);
 
 }

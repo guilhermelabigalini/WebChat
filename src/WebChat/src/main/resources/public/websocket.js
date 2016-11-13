@@ -7,11 +7,19 @@ var customUrl;
 var username;
 var toUserName = null;
 
+$.urlParam = function(name){
+	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	return results[1] || 0;
+}
+
 function join() {
+    
+    var roomId = $.urlParam('roomId');
+    
     toUserName = null;
 
     username = $("#nickname").val();
-    customUrl = wsUri + "/" + "1" + "/" + username;
+    customUrl = wsUri + "/" + roomId + "/" + username;
     console.log("connecting to " + customUrl);
     websocket = new WebSocket(customUrl);
     websocket.onclose = function (evt) {

@@ -16,6 +16,7 @@ public class ChatMessage {
     public final static String MESSAGETYPE_LEAVE = "leave";
     public final static String MESSAGETYPE_USERLIST = "userlist";
 
+    private int room;
     private String from;
     private String to;
     private String type;
@@ -23,6 +24,14 @@ public class ChatMessage {
     private String destination;
     private boolean reserved;
 
+    public int getRoom() {
+        return room;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
+    }
+    
     public String getFrom() {
         return from;
     }

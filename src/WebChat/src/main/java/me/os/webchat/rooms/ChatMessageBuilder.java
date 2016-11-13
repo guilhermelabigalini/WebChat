@@ -10,14 +10,14 @@ package me.os.webchat.rooms;
  * @author guilherme
  */
 public class ChatMessageBuilder {
-    public static ChatMessage buildJoinedMessage(Room targetRoom, ChatUser user) {
+    public static ChatMessage buildJoinedMessage(IRoom targetRoom, ChatUser user) {
         ChatMessage message = new ChatMessage();
         message.setType(ChatMessage.MESSAGETYPE_JOINED);
         message.setFrom(user.getDisplayName());
 
         return message;
     }
-    public static ChatMessage buildUserListMessage(Room targetRoom, ChatUser user) {
+    public static ChatMessage buildUserListMessage(IRoom targetRoom, ChatUser user) {
         ChatMessage ulMessage = new ChatMessage();
         ulMessage.setType(me.os.webchat.rooms.ChatMessage.MESSAGETYPE_USERLIST);
         String userList = targetRoom.getLoggedUsers()

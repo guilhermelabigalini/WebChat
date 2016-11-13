@@ -1,0 +1,16 @@
+== Run the service
+
+Run detached
+docker run --name myredis -d -p 6379:6379 redis
+
+Control-C will terminate the container
+docker run --name myredis -t -i -p 6379:6379 redis
+
+== Check if process is running
+
+docker ps 
+
+== Or attach it:
+
+docker attach e04
+ 
