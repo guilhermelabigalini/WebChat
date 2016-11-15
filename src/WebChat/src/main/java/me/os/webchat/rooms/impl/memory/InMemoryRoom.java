@@ -66,7 +66,7 @@ class InMemoryRoom implements IRoom {
 
         this.loggedUsers.add(user);
 
-        storeUserChannel(getId(), user.getDisplayName(), channel);
+        storeUserChannel(user.getDisplayName(), channel);
 
         ChatMessage ulMessage = ChatMessageBuilder.buildUserListMessage(this, user);
 
@@ -77,15 +77,14 @@ class InMemoryRoom implements IRoom {
         broadcastMessage(joinedMessage);
     }
 
-    @Override
-    public boolean isUserPresent(ChatUser cu) {
+    private boolean isUserPresent(ChatUser cu) {
         return this.loggedUsers.stream().anyMatch(u -> u.getDisplayName().equals(cu.getDisplayName()));
     }
 
     @Override
     public void removeUser(ChatUser user) throws BroadcastException {
 
-        storeUserChannel(getId(), user.getDisplayName(), null);
+        storeUserChannel(user.getDisplayName(), null);
 
         this.loggedUsers.removeIf(u -> u.getDisplayName().equals(user.getDisplayName()));
 
@@ -105,14 +104,14 @@ class InMemoryRoom implements IRoom {
             if (cu.getDisplayName().equals(message.getFrom())
                     || (!message.isReserved() || cu.getDisplayName().equals(message.getTo()))) {
 
-                IUserCommuncationChannel userSession = getUserChannel(getId(), cu.getDisplayName());
+                IUserCommuncationChannel userSession = getUserChannel(cu.getDisplayName());
 
                 if (userSession == null) {
                     continue;
                 }
 
                 if (!userSession.isActive()) {
-                    storeUserChannel(getId(), cu.getDisplayName(), null);
+                    storeUserChannel(cu.getDisplayName(), null);
                 } else {
                     userSession.send(message);
                 }
@@ -120,13 +119,13 @@ class InMemoryRoom implements IRoom {
         }
     }
 
-    protected void storeUserChannel(int room, String login, IUserCommuncationChannel value) {
-        String key = room + "." + login;
+    protected void storeUserChannel(String login, IUserCommuncationChannel value) {
+        String key = login;
         userVsSession.put(key, value);
     }
 
-    protected IUserCommuncationChannel getUserChannel(int room, String login) {
-        String key = room + "." + login;
+    protected IUserCommuncationChannel getUserChannel(String login) {
+        String key = login;
         return userVsSession.get(key);
     }
 }

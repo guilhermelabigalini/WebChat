@@ -19,8 +19,6 @@ public interface IRoom {
 
     String getName();
 
-    boolean isUserPresent(ChatUser cu);
-
     void removeUser(ChatUser userId) throws BroadcastException;
 
     void joinUser(ChatUser user, IUserCommuncationChannel channel) throws FullRoomException, UserAlreadyLoggedException, BroadcastException;

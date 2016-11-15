@@ -7,7 +7,10 @@ package me.os.webchat.controllers;
 
 import java.util.List;
 import me.os.webchat.rooms.IRoom;
+import me.os.webchat.rooms.IRoomService;
+import me.os.webchat.rooms.RoomServiceFactory;
 import me.os.webchat.rooms.impl.memory.InMemoryRoomService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +24,14 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-    private final InMemoryRoomService roomService = new InMemoryRoomService();
+    @Autowired
+    private RoomServiceFactory roomServiceFactory; // = new InMemoryRoomService();
 
     @RequestMapping("/")
     public ModelAndView index() {
+        
+        IRoomService roomService = roomServiceFactory.createRoomService();
+        
         List<IRoom> rooms = roomService.getRooms(null);
 
         return new ModelAndView("index", "rooms", rooms);
@@ -34,6 +41,8 @@ public class HomeController {
     public ModelAndView greeting(
             @RequestParam(value = "roomId", required = true) Integer roomId) {
 
+        IRoomService roomService = roomServiceFactory.createRoomService();
+        
         IRoom room = roomService.getRoom(roomId);
         
         return new ModelAndView("room", "room", room);

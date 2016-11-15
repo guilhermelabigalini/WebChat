@@ -5,6 +5,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.util.List;
 import me.os.webchat.rooms.ChatUser;
 import me.os.webchat.rooms.IRoom;
+import me.os.webchat.rooms.IRoomService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,7 @@ public class RoomController {
 
     //@Autowired
     //private IRoomService roomService;
-    private final InMemoryRoomService roomService = new InMemoryRoomService();
-
+    private final IRoomService roomService = new InMemoryRoomService();
 
     @RequestMapping(path = "/api/rooms", method = GET)
     public List<IRoom> getRooms(@RequestParam(value = "query", required = false) String name) {

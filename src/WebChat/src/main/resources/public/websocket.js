@@ -7,14 +7,7 @@ var customUrl;
 var username;
 var toUserName = null;
 
-$.urlParam = function(name){
-	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-	return results[1] || 0;
-}
-
-function join() {
-    
-    var roomId = $.urlParam('roomId');
+function join(roomId) {
     
     toUserName = null;
 
