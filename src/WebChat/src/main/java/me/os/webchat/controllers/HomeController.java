@@ -25,12 +25,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
 
     @Autowired
-    private RoomServiceFactory roomServiceFactory; // = new InMemoryRoomService();
-
+    private RoomServiceFactory roomServiceFactory; 
+    
     @RequestMapping("/")
     public ModelAndView index() {
         
-        IRoomService roomService = roomServiceFactory.createRoomService();
+        IRoomService roomService = roomServiceFactory.getRoomService();
         
         List<IRoom> rooms = roomService.getRooms(null);
 
@@ -41,7 +41,7 @@ public class HomeController {
     public ModelAndView greeting(
             @RequestParam(value = "roomId", required = true) Integer roomId) {
 
-        IRoomService roomService = roomServiceFactory.createRoomService();
+        IRoomService roomService = roomServiceFactory.getRoomService();
         
         IRoom room = roomService.getRoom(roomId);
         

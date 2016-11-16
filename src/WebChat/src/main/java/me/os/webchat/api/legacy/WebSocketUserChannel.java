@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.os.webchat.api;
+package me.os.webchat.api.legacy;
 
 import java.io.IOException;
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
 import me.os.webchat.rooms.BroadcastException;
+import me.os.webchat.rooms.ChatMessage;
 import me.os.webchat.rooms.IUserCommuncationChannel;
 
 /**
@@ -24,7 +25,7 @@ public class WebSocketUserChannel implements IUserCommuncationChannel {
     }
     
     @Override
-    public void send(Object message) throws BroadcastException {
+    public void send(ChatMessage message) throws BroadcastException {
         try {
             this.session.getBasicRemote().sendObject(message);
         } catch (EncodeException | IOException ex) {

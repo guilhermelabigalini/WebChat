@@ -1,6 +1,6 @@
 //var wsUri = "ws://" + document.location.hostname + ":" + document.location.port + document.location.pathname + "chat";
 
-var wsUri = "ws://" + document.location.hostname + ":" + document.location.port + "/chat";
+var wsUri = "ws://" + document.location.hostname + ":" + document.location.port + "/roomsocket";
 
 var websocket = null;
 var customUrl;
@@ -12,7 +12,10 @@ function join(roomId) {
     toUserName = null;
 
     username = $("#nickname").val();
-    customUrl = wsUri + "/" + roomId + "/" + username;
+    //customUrl = wsUri + "/" + roomId + "/" + username;
+    
+    customUrl = wsUri + "?roomId=" + roomId + "&displayName=" + username;
+    
     console.log("connecting to " + customUrl);
     websocket = new WebSocket(customUrl);
     websocket.onclose = function (evt) {

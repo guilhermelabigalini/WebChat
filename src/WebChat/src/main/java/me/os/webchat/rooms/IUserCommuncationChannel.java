@@ -10,7 +10,7 @@ package me.os.webchat.rooms;
  * @author guilherme
  */
 public interface IUserCommuncationChannel {
-    void send(Object message) throws BroadcastException;
+    void send(ChatMessage message) throws BroadcastException;
     
     boolean isActive();
 }
