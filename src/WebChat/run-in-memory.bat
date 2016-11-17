@@ -1,0 +1,1 @@
+java -jar target\WebChat-1.0-SNAPSHOT.jar -Dserver.port=8080 -Dmanagement.port=9001 -Dapp.chat.channel=memory
