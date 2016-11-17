@@ -1,6 +1,9 @@
 package me.os.webchat.api;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import me.os.webchat.rooms.BroadcastException;
 import me.os.webchat.rooms.ChatMessage;
 import me.os.webchat.rooms.ChatUser;
@@ -63,9 +66,13 @@ public class SpringChatServer extends TextWebSocketHandler {
         message(getParams(session), ChatMessageEncoderHelper.decode(message.getPayload()), session);
     }
     
-    private QueryParam getParams(WebSocketSession session) {
+    private QueryParam getParams(WebSocketSession session) throws UnsupportedEncodingException {
         MultiValueMap<String, String> map = UriComponentsBuilder.fromUri(session.getUri()).build().getQueryParams();
-        return new QueryParam(Integer.parseInt(map.getFirst("roomId")), map.getFirst("displayName"));
+        int roomId = Integer.parseInt(map.getFirst("roomId"));
+        String displayName = map.getFirst("displayName");
+        displayName = URLDecoder.decode(displayName, "UTF-8");
+        
+        return new QueryParam(roomId, displayName);
     }
     
     private void join(

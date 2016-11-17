@@ -39,17 +39,21 @@ public class HelloRedisTest {
 
     @After
     public void tearDown() {
+        JedisFactory.getInstance().useResource(jedis -> {
+            jedis.flushAll();
+        });
     }
 
 //https://github.com/redisson/redisson
 //https://mvnrepository.com/artifact/com.lambdaworks/lettuce
 //http://www.programcreek.com/java-api-examples/index.php?api=redis.clients.jedis.JedisPubSub
-    //@Test
+    @Test
     public void listTest() {
 
         String listName = "mylist";
         String item1 = " item numer ber";
         String item2 = " item 2";
+        String item3 = "item number 3";
 
         JedisFactory.getInstance().useResource(jedis -> {
             jedis.del(listName);
@@ -72,13 +76,33 @@ public class HelloRedisTest {
         });
 
         JedisFactory.getInstance().useResource(jedis -> {
+            jedis.lpush(listName, item3);
+        });
+
+        JedisFactory.getInstance().useResource(jedis -> {
+            assertEquals(3, (long) jedis.llen(listName));
+
             List<String> elements = jedis.lrange(listName, 0, 1000);
             assertTrue(elements.contains(item1));
             assertTrue(elements.contains(item2));
+            assertTrue(elements.contains(item3));
+        });
+
+        JedisFactory.getInstance().useResource(jedis -> {
+            jedis.lrem(listName, 1, item2);
+        });
+
+        JedisFactory.getInstance().useResource(jedis -> {
+            assertEquals(2, (long) jedis.llen(listName));
+
+            List<String> elements = jedis.lrange(listName, 0, 1000);
+            assertTrue(elements.contains(item1));
+            assertFalse(elements.contains(item2));
+            assertTrue(elements.contains(item3));
         });
     }
 
-    //@Test
+    @Test
     public void connect_set() {
 
         JedisFactory.getInstance().useResource(jedis -> {
@@ -92,22 +116,9 @@ public class HelloRedisTest {
 
             assertEquals(value, v);
         });
-
-//        Jedis jedis = new Jedis("40.79.46.71", 6379, 0);
-//
-//        jedis.connect();
-        //jedis.lpush(key, strings)
-        //http://redis.io/commands/srem
-        //http://redis.io/commands/sadd
-        //http://redis.io/commands/smembers
-        //jedis.sadd(key, members)
-        //jedis.srem(key, members)
-//        jedis.subscribe(new JedisPubSub() {
-//            
-//}), channels);
     }
 
-    //@Test
+    @Test
     public void pub_sub() throws InterruptedException {
         final String channel = "room";
         int totalMessages = 10;

@@ -7,9 +7,11 @@
 	- (OK) remove users when leaving
 	- (OK) add all users when connected 
 - (OK) private messages are not working
+- users nicknames with space are not working
+	- duplicate in user list
 - make code more generic
 	- react 
-	- class for room 
+	- (OK) class for room 
 - integrate with Redis
 - (ok) allow multiple rooms
 
