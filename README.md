@@ -1,6 +1,6 @@
 # WebChat
 
-A web chat implementation, that can run both with an in-memory user repository or Redis as backend for users and messaging.
+A web chat implementation, that can run both with an in-memory user repository or Redis as backend for users and messaging. Application is developed with Spring boot with WebSocket's.
 
 ## In-memory repository execution
 
