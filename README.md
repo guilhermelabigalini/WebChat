@@ -1,6 +1,6 @@
 # WebChat
 
-A web chat implementation, that can run both with an in-memory user repository or Redis as backend for users and messaging. Application is developed with Spring boot with WebSocket's.
+A web chat implementation, that can run both with an in-memory user repository or Redis as backend for users and messaging. Application is developed in Spring boot with WebSocket's.
 
 ## In-memory repository execution
 
@@ -10,6 +10,21 @@ Running with the in-memory user repository reduces the deployment complexity, bu
 
 ## Redis repository execution
 
-Running with the Redis user repository increse the scalability, this deployment strategy allow communication between users even if they are connected to different http servers, allow the web chat to deployed across multiple servers.
+Running with the Redis user repository increse the scalability, this deployment strategy allow communication between users even if they are connected to different http servers, this allow the web chat http server to deployed across multiple servers.
+
+To start the application in this mode, the value "redis" must be passed on the app.chat.channel parameter, like:
+```
+java -jar target\WebChat-1.0-SNAPSHOT.jar --server.port=9090 --management.port=9000 --app.chat.channel=redis
+```
 
 [![In memory mode](https://github.com/guilhermelabigalini/WebChat/blob/master/docs/with_redis.png)]()
+
+## Room list and room
+
+Multiple rooms are also supported and each room have its own user list, inside the meeting user, users can exchange private messages.
+
+[![Room](https://github.com/guilhermelabigalini/WebChat/blob/master/docs/room.png)]()
+
+[![Room list](https://github.com/guilhermelabigalini/WebChat/blob/master/docs/roomlist.png)]()
+
+
