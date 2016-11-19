@@ -111,7 +111,7 @@ class InMemoryRoom implements IRoom {
                 }
 
                 if (!userSession.isActive()) {
-                    storeUserChannel(cu.getDisplayName(), null);
+                    removeUser(cu);
                 } else {
                     userSession.send(message);
                 }

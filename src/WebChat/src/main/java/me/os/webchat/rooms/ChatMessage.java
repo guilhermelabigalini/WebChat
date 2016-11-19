@@ -71,4 +71,11 @@ public class ChatMessage {
         this.reserved = reserved;
     }
 
+    @Override
+    public String toString() {
+        return "ChatMessage{" + "from=" + from + ", to=" + to + ", type=" + type + ", body=" + body + ", destination=" + destination + ", reserved=" + reserved + '}';
+    }
+    
+    
+
 }

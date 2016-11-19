@@ -24,18 +24,6 @@ public class HelloRedisTest {
     public HelloRedisTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
     @After
     public void tearDown() {
         JedisFactory.getInstance().useResource(jedis -> {
@@ -43,9 +31,6 @@ public class HelloRedisTest {
         });
     }
 
-//https://github.com/redisson/redisson
-//https://mvnrepository.com/artifact/com.lambdaworks/lettuce
-//http://www.programcreek.com/java-api-examples/index.php?api=redis.clients.jedis.JedisPubSub
     //@Test
     public void listTest() {
 

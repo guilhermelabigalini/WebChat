@@ -11,7 +11,7 @@ package me.os.webchat.rooms.impl.redis;
  */
 class RedisDBConfig {
 
-    public static String HOST = "40.79.46.71";
+    public static String HOST = "localhost";
     public static int PORT = 6379;
     public static int TIMEOUT = 30;
 }

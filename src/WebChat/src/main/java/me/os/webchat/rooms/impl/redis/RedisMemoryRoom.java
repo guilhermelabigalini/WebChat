@@ -16,6 +16,8 @@ import me.os.webchat.rooms.FullRoomException;
 import me.os.webchat.rooms.IRoom;
 import me.os.webchat.rooms.IUserCommuncationChannel;
 import me.os.webchat.rooms.UserAlreadyLoggedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPubSub;
 
 class RedisMemoryRoom implements IRoom {
@@ -43,6 +45,8 @@ class RedisMemoryRoom implements IRoom {
 
     private final int MaxUsersPerRoom = 10;
 
+    private static Logger LOG = LoggerFactory.getLogger(RedisMemoryRoom.class);
+    
     private final ObjectMapper mapper = new ObjectMapper();
     private int id;
     private String name;
@@ -114,10 +118,11 @@ class RedisMemoryRoom implements IRoom {
     @Override
     public void removeUser(ChatUser user) throws BroadcastException {
 
+        LOG.info("removing user " + user.getDisplayName() + " from room " + this.getId());
+        
         storeUserChannel(user.getDisplayName(), null);
 
-        removeUser(user.getDisplayName());
-
+        removeUserFromRedis(user.getDisplayName());
         ChatMessage message = new ChatMessage();
         message.setType(ChatMessage.MESSAGETYPE_LEAVE);
         message.setFrom(user.getDisplayName());
@@ -137,19 +142,24 @@ class RedisMemoryRoom implements IRoom {
         });
     }
 
-    private void removeUser(String name) {
+    private void removeUserFromRedis(String name) {
         JedisFactory.getInstance().useResource(jedis -> {
             jedis.lrem(listName, 1, name);
         });
     }
 
     private void readMessages() {
+        
+        LOG.info("starting to listen " + channelName);
+                
         Runnable run2 = () -> {
 
             JedisFactory.getInstance().useResource(jedis -> {
 
                 jedis.subscribe(new RoomSub(message -> {
 
+                    LOG.info("received message from " + channelName + ": " + message);
+                    
                     for (String cu : this.getLocalUsers()) {
                         if (cu.equals(message.getFrom())
                                 || (!message.isReserved() || cu.equals(message.getTo()))) {
@@ -160,23 +170,23 @@ class RedisMemoryRoom implements IRoom {
                                 continue;
                             }
 
-                            if (!userSession.isActive()) {
-                                storeUserChannel(cu, null);
-                            } else {
-                                try {
+                            try {
+                                if (!userSession.isActive()) {
+                                    removeUser(new ChatUser(cu));
+                                } else {
                                     userSession.send(message);
-                                } catch (BroadcastException ex) {
-                                    storeUserChannel(cu, null);
                                 }
+                            } catch (BroadcastException ex) {
+                                storeUserChannel(cu, null);
                             }
                         }
                     }
-
                 }), channelName);
             });
         };
 
         Thread t1 = new Thread(run2);
+
         t1.start();
     }
 
@@ -185,6 +195,8 @@ class RedisMemoryRoom implements IRoom {
 
         JedisFactory.getInstance().useResource(jedis -> {
             try {
+                LOG.info("sending message to " + channelName + ": " + message);
+                
                 String jsonMsg = mapper.writeValueAsString(message);
 
                 jedis.publish(channelName, jsonMsg);
