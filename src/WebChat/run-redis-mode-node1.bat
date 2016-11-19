@@ -1,1 +1,1 @@
-java -jar target\WebChat-1.0-SNAPSHOT.jar -Dserver.port=8080 -Dmanagement.port=9001 -Dapp.chat.channel=redis
+java -jar target\WebChat-1.0-SNAPSHOT.jar --server.port=9090 --management.port=9000 --app.chat.channel=redis

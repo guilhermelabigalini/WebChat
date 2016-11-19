@@ -124,7 +124,7 @@ function removeUserFromList(userName)
 function addUserToList(userName)
 {
     var ul = $("#user-list");
-    if (!ul.children('#' + userName).length) {
+    if (!ul.children("[id='" + userName + "']").length) {
         var newLink = $('<a href="#" class="list-group-item" id="' + userName + '">' + userName + '</a>');
         newLink.click(function (evt) {
             selectcontact(this, userName);

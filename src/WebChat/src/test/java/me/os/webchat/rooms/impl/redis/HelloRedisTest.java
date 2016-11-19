@@ -6,7 +6,6 @@
 package me.os.webchat.rooms.impl.redis;
 
 import java.util.List;
-import java.util.concurrent.Executors;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,7 +46,7 @@ public class HelloRedisTest {
 //https://github.com/redisson/redisson
 //https://mvnrepository.com/artifact/com.lambdaworks/lettuce
 //http://www.programcreek.com/java-api-examples/index.php?api=redis.clients.jedis.JedisPubSub
-    @Test
+    //@Test
     public void listTest() {
 
         String listName = "mylist";
@@ -102,7 +101,7 @@ public class HelloRedisTest {
         });
     }
 
-    @Test
+    //@Test
     public void connect_set() {
 
         JedisFactory.getInstance().useResource(jedis -> {
@@ -118,7 +117,7 @@ public class HelloRedisTest {
         });
     }
 
-    @Test
+    //@Test
     public void pub_sub() throws InterruptedException {
         final String channel = "room";
         int totalMessages = 10;

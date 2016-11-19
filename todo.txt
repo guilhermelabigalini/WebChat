@@ -7,8 +7,7 @@
 	- (OK) remove users when leaving
 	- (OK) add all users when connected 
 - (OK) private messages are not working
-- users nicknames with space are not working
-	- duplicate in user list
+- (OK) users nicknames with space are not working
 - make code more generic
 	- react 
 	- (OK) class for room 
